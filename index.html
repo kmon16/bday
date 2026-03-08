@@ -23,7 +23,7 @@
             backdrop-filter: blur(10px); margin-bottom: 30px;
         }
         .page { display: none; }
-        .active { display: block; animation: fadeIn 0.4s ease-out; }
+        .active { display: block !important; animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
         .match-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 15px 0; perspective: 1000px; }
@@ -88,15 +88,24 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script>
         function showPage(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
+            const pages = document.getElementsByClassName('page');
+            for (let i = 0; i < pages.length; i++) {
+                pages[i].classList.remove('active');
+            }
+            const target = document.getElementById(id);
+            if (target) {
+                target.classList.add('active');
+                window.scrollTo(0,0);
+            }
         }
 
         let attempts = 0;
         function checkRiddle() {
             const val = document.getElementById('ans1').value.toLowerCase();
             if(val.includes("love")) {
-                confetti(); showPage('stage2'); loadThisOrThat();
+                confetti(); 
+                showPage('stage2'); 
+                loadThisOrThat();
             } else {
                 attempts++;
                 const h = document.getElementById('hint-text');
@@ -118,7 +127,8 @@
             { a: "Travel ✈️", b: "Home 🏡" },
             { a: "Dancing 💃", b: "Talking 💬" }
         ];
-        let curQ = 0, selected = [];
+        let curQ = 0;
+        let selected = [];
         
         function loadThisOrThat() {
             if(curQ < options.length) {
@@ -126,24 +136,38 @@
                 document.getElementById('choiceA').innerText = options[curQ].a;
                 document.getElementById('choiceB').innerText = options[curQ].b;
             } else {
-                // We are at the end of choices
-                document.getElementById('final-choices').innerText = selected.join(", ");
-                confetti(); 
-                showPage('stage3'); 
-                initMatch();
+                finishChoices();
             }
         }
+
         function recordChoice(s) {
-            selected.push((s=='A'?options[curQ].a:options[curQ].b).split(" ")[0]);
-            curQ++; 
-            loadThisOrThat();
+            try {
+                let picked = (s == 'A') ? options[curQ].a : options[curQ].b;
+                selected.push(picked.split(" ")[0]);
+            } catch(e) { console.log("Choice record error"); }
+            
+            curQ++;
+            if (curQ >= options.length) {
+                finishChoices();
+            } else {
+                loadThisOrThat();
+            }
+        }
+
+        function finishChoices() {
+            const display = document.getElementById('final-choices');
+            if (display) display.innerText = selected.join(", ");
+            confetti(); 
+            showPage('stage3'); 
+            initMatch();
         }
 
         const icons = ['💍', '📸', '💌', '🏠', '🫂', '🥂', '🎞️', '❤️'];
         let cards = [...icons, ...icons].sort(()=>Math.random()-0.5), flipped = [], matched = 0;
+        
         function initMatch() {
             const grid = document.getElementById('match-grid');
-            grid.innerHTML = ''; // Clear previous grid if any
+            grid.innerHTML = ''; 
             cards.forEach((icon) => {
                 const c = document.createElement('div');
                 c.className = 'match-card';
