@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Level 32 Quest ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --deep-red: #660000; --bright-red: #d90429; --gold: #ffd700; --white: #ffffff; }
+        
+        /* MOBILE RESET */
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        body { 
+            margin: 0; font-family: 'Poppins', sans-serif; background: #1a0000; 
+            color: var(--white); overflow-x: hidden; min-height: 100vh; 
+            display: flex; flex-direction: column; align-items: center;
+            touch-action: manipulation;
+        }
+        
+        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; }
+        .header { font-family: 'Dancing Script', cursive; font-size: 2.5rem; color: var(--bright-red); margin: 20px 0; text-shadow: 0 0 10px rgba(217, 4, 41, 0.5); }
+        
+        .card-container { 
+            width: 92%; max-width: 400px; background: rgba(40, 0, 0, 0.9); 
+            padding: 20px; border-radius: 25px; border: 2px solid var(--bright-red); 
+            box-shadow: 0 0 30px rgba(217, 4, 41, 0.3); text-align: center; 
+            backdrop-filter: blur(10px); margin-bottom: 30px;
+        }
+        
+        .page { display: none; }
+        .active { display: block; animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+        /* 3D FLIP CARDS (MOBILE SIZED) */
+        .match-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 15px 0; perspective: 1000px; }
+        .match-card { height: 65px; cursor: pointer; position: relative; transform-style: preserve-3d; transition: transform 0.5s; }
+        .match-card.flipped { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid var(--bright-red); font-size: 1.3rem; }
+        .card-front { background: var(--deep-red); color: var(--gold); }
+        .card-back { background: var(--white); color: var(--bright-red); transform: rotateY(180deg); }
+
+        /* CHOICE BUTTONS */
+        .choice-container { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .choice-btn { background: var(--deep-red); border: 2px solid var(--bright-red); color: white; padding: 16px; border-radius: 15px; cursor: pointer; font-weight: bold; font-size: 1rem; }
+        .choice-btn:active { background: var(--bright-red); transform: scale(0.98); }
+
+        /* CATCHER CANVAS */
+        #game-canvas { background: rgba(0,0,0,0.4); border: 2px solid var(--bright-red); border-radius: 15px; width: 100%; height: auto; touch-action: none; }
+
+        input { padding: 15px; width: 100%; border-radius: 12px; border: none; background: #330000; color: white; text-align: center; font-size: 16px; /* Prevents iOS zoom on focus */ margin-bottom: 10px; }
+        button.main-btn { background: var(--bright-red); color: white; border: none; padding: 15px; border-radius: 50px; cursor: pointer; font-weight: bold; width: 100%; font-size: 1.1rem; margin-top: 10px; }
+        
+        .love-letter { background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 15px; border-left: 4px solid var(--gold); text-align: left; font-size: 0.95rem; line-height: 1.5; }
+        #hint-text { color: var(--gold); font-size: 0.85rem; margin: 8px 0; min-height: 18px; }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+    <div class="header">Level 32 Quest</div>
+
+    <div class="card-container">
+        <div id="stage1" class="page active">
+            <h2>The Password</h2>
+            <p style="font-size: 0.9rem;">"I cannot be bought, but I can be given. I am the reason your 32 years are worth livin'."</p>
+            <input type="text" id="ans1" placeholder="Type here...">
+            <div id="hint-text"></div>
+            <button class="main-btn" onclick="checkRiddle()">Unlock Quest</button>
+        </div>
+
+        <div id="stage2" class="page">
+            <h2>This or That</h2>
+            <div class="choice-container">
+                <button class="choice-btn" id="choiceA" onclick="recordChoice('A')"></button>
+                <div style="font-family:'Dancing Script'; color:var(--gold)">or</div>
+                <button class="choice-btn" id="choiceB" onclick="recordChoice('B')"></button>
+            </div>
+            <p style="margin-top:10px; font-size: 0.8rem; color: var(--gold);">Step <span id="q-num">1</span>/10</p>
+        </div>
+
+        <div id="stage3" class="page">
+            <h2>Memory Match</h2>
+            <div class="match-grid" id="match-grid"></div>
+        </div>
+
+        <div id="stage4" class="page">
+            <h2>Catch My Love</h2>
+            <canvas id="game-canvas" width="300" height="300"></canvas>
+            <h3 id="score-text">Score: 0/10</h3>
+        </div>
+
+        <div id="win" class="page">
+            <h2 style="font-family:'Dancing Script'; color:var(--gold); font-size: 2.2rem;">Quest Complete! ❤️</h2>
+            <div class="love-letter">
+                "Happy 32nd Birthday!<br><br>
+                Today you picked <b><span id="final-choices"></span></b>... but you'll always be my #1 pick.<br><br>
+                I love you!"
+            </div>
+            <button class="main-btn" onclick="location.reload()">Replay</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        // RIDDLE
+        let attempts = 0;
+        function checkRiddle() {
+            const val = document.getElementById('ans1').value.toLowerCase();
+            if(val.includes("love")) {
+                confetti(); showPage('stage2'); loadThisOrThat();
+            } else {
+                attempts++;
+                const h = document.getElementById('hint-text');
+                if(attempts == 1) h.innerText = "Hint: Starts with 'L'";
+                else if(attempts == 2) h.innerText = "Hint: Rhymes with 'Dove'";
+                else h.innerText = "Hint: It's what I feel for you! ❤️";
+            }
+        }
+
+        // CHOICES
+        const options = [
+            { a: "Long Walks 🌳", b: "Late Drives 🚗" },
+            { a: "Home Food 🍝", b: "Ordering In 🍕" },
+            { a: "Beach 🏖️", b: "Mountains ⛰️" },
+            { a: "Action 🍿", b: "Romcom 🎬" },
+            { a: "Early Bird ☀️", b: "Night Owl 🦉" },
+            { a: "Gifts 🎁", b: "Surprises ✨" },
+            { a: "Coffee ☕", b: "Ice Cream 🍦" },
+            { a: "Party 🥳", b: "Cozy Night 🛋️" },
+            { a: "Travel ✈️", b: "Home 🏡" },
+            { a: "Dancing 💃", b: "Talking 💬" }
+        ];
+        let curQ = 0, selected = [];
+        function loadThisOrThat() {
+            if(curQ < 10) {
+                document.getElementById('q-num').innerText = curQ + 1;
+                document.getElementById('choiceA').innerText = options[curQ].a;
+                document.getElementById('choiceB').innerText = options[curQ].b;
+            } else {
+                document.getElementById('final-choices').innerText = selected.join(", ");
+                confetti(); showPage('stage3'); initMatch();
+            }
+        }
+        function recordChoice(s) {
+            selected.push((s=='A'?options[curQ].a:options[curQ].b).split(" ")[0]);
+            curQ++; loadThisOrThat();
+        }
+
+        // MATCH
+        const icons = ['💍', '📸', '💌', '🏠', '🫂', '🥂', '🎞️', '❤️'];
+        let cards = [...icons, ...icons].sort(()=>Math.random()-0.5), flipped = [], matched = 0;
+        function initMatch() {
+            const grid = document.getElementById('match-grid');
+            cards.forEach((icon) => {
+                const c = document.createElement('div');
+                c.className = 'match-card';
+                c.innerHTML = `<div class="card-face card-front">?</div><div class="card-face card-back">${icon}</div>`;
+                c.onclick = () => {
+                    if(flipped.length < 2 && !c.classList.contains('flipped')) {
+                        c.classList.add('flipped'); flipped.push({el:c, icon});
+                        if(flipped.length == 2) {
+                            if(flipped[0].icon == flipped[1].icon) {
+                                matched++; flipped = [];
+                                if(matched == 8) { confetti(); setTimeout(()=> {showPage('stage4'); initCatcher();}, 800); }
+                            } else {
+                                setTimeout(()=> {flipped.forEach(f=>f.el.classList.remove('flipped')); flipped=[];}, 700);
+                            }
+                        }
+                    }
+                };
+                grid.appendChild(c);
+            });
+        }
+
+        // CATCHER
+        function initCatcher() {
+            const cvs = document.getElementById('game-canvas'), ctx = cvs.getContext('2d');
+            let score = 0, x = 130, items = [];
+            const handleTouch = (e) => {
+                e.preventDefault();
+                const rect = cvs.getBoundingClientRect();
+                const touchX = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+                x = Math.max(0, Math.min(touchX - 20, 260));
+            };
+            cvs.addEventListener('touchmove', handleTouch, {passive: false});
+            cvs.addEventListener('mousemove', handleTouch);
+            
+            function spawn() { if(score < 10) { items.push({x: Math.random()*270, y:0}); setTimeout(spawn, 900); } }
+            spawn();
+            function draw() {
+                ctx.clearRect(0,0,300,300); ctx.font = "30px Arial"; ctx.fillText("🧺", x, 280);
+                items.forEach((h, i) => {
+                    h.y += 3.5; ctx.fillText("❤️", h.x, h.y);
+                    if(h.y > 250 && h.x > x - 15 && h.x < x + 35) {
+                        items.splice(i, 1); score++;
+                        document.getElementById('score-text').innerText = `Score: ${score}/10`;
+                        if(score >= 10) { confetti(); showPage('win'); }
+                    }
+                });
+                if(score < 10) requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // BG
+        const bg = document.getElementById('bg-canvas');
+        const bctx = bg.getContext('2d');
+        bg.width = window.innerWidth; bg.height = window.innerHeight;
+        let bgh = [];
+        for(let i=0; i<20; i++) bgh.push({x:Math.random()*bg.width, y:Math.random()*bg.height, s:Math.random()*10+5, sp:Math.random()*0.8+0.4});
+        function anim() {
+            bctx.clearRect(0,0,bg.width,bg.height);
+            bgh.forEach(h => {
+                h.y -= h.sp; if(h.y < -20) h.y = bg.height+20;
+                bctx.globalAlpha = 0.2; bctx.font = h.s+"px Arial"; bctx.fillText("❤️", h.x, h.y);
+            });
+            requestAnimationFrame(anim);
+        }
+        anim();
+    </script>
+</body>
+</html>
