@@ -3,131 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Level 32 Quest ❤️</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <title>Level 32: Our Love Quest 🌸</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --deep-red: #660000; --bright-red: #d90429; --gold: #ffd700; --white: #ffffff; }
-        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; touch-action: manipulation;}
+        :root { 
+            --soft-pink: #ffdae0; 
+            --deep-pink: #ff8fa3; 
+            --berry: #c9184a; 
+            --cream: #fff5f6;
+            --white: #ffffff;
+        }
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; touch-action: none; }
+        
         body { 
-            margin: 0; font-family: 'Poppins', sans-serif; background: #1a0000; 
-            color: var(--white); overflow-x: hidden; min-height: 100vh; 
+            margin: 0; font-family: 'Quicksand', sans-serif; 
+            background: var(--soft-pink); 
+            color: var(--berry); overflow: hidden; min-height: 100vh; 
             display: flex; flex-direction: column; align-items: center;
         }
-        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; }
-        .header { font-family: 'Dancing Script', cursive; font-size: 2.5rem; color: var(--bright-red); margin: 20px 0; text-shadow: 0 0 10px rgba(217, 4, 41, 0.5); }
+        
+        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.5; }
+        .header { font-family: 'Dancing Script', cursive; font-size: 2.5rem; color: var(--berry); margin: 20px 0; }
+
         .card-container { 
-            width: 92%; max-width: 400px; background: rgba(40, 0, 0, 0.9); 
-            padding: 20px; border-radius: 25px; border: 2px solid var(--bright-red); 
-            box-shadow: 0 0 30px rgba(217, 4, 41, 0.3); text-align: center; 
-            backdrop-filter: blur(10px); margin-bottom: 30px;
+            width: 92%; max-width: 400px; background: rgba(255, 255, 255, 0.92); 
+            padding: 20px; border-radius: 30px; border: 4px solid var(--deep-pink); 
+            text-align: center; backdrop-filter: blur(5px); position: relative;
         }
+
         .page { display: none; }
-        .active { display: block !important; animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .active { display: block !important; animation: popIn 0.4s ease-out; }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 
-        /* WHEEL STYLES */
-        .wheel-container { position: relative; width: 280px; height: 280px; margin: 20px auto; }
-        #wheel { width: 100%; height: 100%; border-radius: 50%; border: 5px solid var(--gold); transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); background: conic-gradient(from 0deg, #d90429 0deg 60deg, #660000 60deg 120deg, #d90429 120deg 180deg, #660000 180deg 240deg, #d90429 240deg 300deg, #660000 300deg 360deg); position: relative; overflow: hidden; }
-        .wheel-emoji { position: absolute; width: 50px; height: 50px; top: 50%; left: 50%; margin-top: -25px; margin-left: -25px; font-size: 2rem; display: flex; align-items: center; justify-content: center; transform-origin: center center; }
-        .pointer { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid var(--gold); z-index: 10; }
-        #compliment-popup { margin-top: 15px; color: var(--gold); font-weight: bold; font-style: italic; min-height: 50px; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.1); display: none; }
+        .main-btn { 
+            background: var(--deep-pink); color: white; border: none; 
+            padding: 15px; border-radius: 50px; cursor: pointer; 
+            font-weight: bold; width: 100%; font-size: 1.1rem; 
+            margin-top: 10px; box-shadow: 0 4px 0 var(--berry);
+        }
 
-        /* SCRATCH-OFF STYLES */
-        .scratch-box { position: relative; width: 250px; height: 250px; margin: 15px auto; border-radius: 15px; overflow: hidden; border: 4px solid var(--gold); background: var(--deep-red); display: flex; align-items: center; justify-content: center; color: var(--gold); font-weight: bold; }
-        #scratch-canvas { position: absolute; top: 0; left: 0; cursor: crosshair; touch-action: none; }
+        /* --- WHEEL & POINTER FIX --- */
+        .wheel-container { 
+            position: relative; 
+            width: 260px; 
+            height: 260px; 
+            margin: 25px auto; 
+            z-index: 1;
+        }
+        
+        #wheel { 
+            width: 100%; height: 100%; border-radius: 50%; border: 6px solid var(--deep-pink); 
+            transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); 
+            background: conic-gradient(from 0deg, #ffb3c1 0deg 60deg, #ff8fa3 60deg 120deg, #ffb3c1 120deg 180deg, #ff8fa3 180deg 240deg, #ffb3c1 240deg 300deg, #ff8fa3 300deg 360deg); 
+        }
+
+        /* The actual pointer triangle */
+        .wheel-pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 35px solid var(--berry); /* Dark berry color for visibility */
+            z-index: 100; /* Ensures it stays on top of everything */
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
+        }
+
+        .wheel-emoji { position: absolute; width: 40px; height: 40px; top: 50%; left: 50%; margin-top: -20px; margin-left: -20px; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; transform-origin: center center; }
 
         /* MATCH GRID */
-        .match-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 15px 0; perspective: 1000px; }
-        .match-card { height: 65px; cursor: pointer; position: relative; transform-style: preserve-3d; transition: transform 0.5s; }
+        .match-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 15px 0; }
+        .match-card { height: 60px; cursor: pointer; position: relative; transform-style: preserve-3d; transition: transform 0.5s; }
         .match-card.flipped { transform: rotateY(180deg); }
-        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid var(--bright-red); font-size: 1.3rem; }
-        .card-front { background: var(--deep-red); color: var(--gold); }
-        .card-back { background: var(--white); color: var(--bright-red); transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 10px; border: 2px solid var(--deep-pink); font-size: 1.3rem; }
+        .card-front { background: var(--soft-pink); }
+        .card-back { background: white; transform: rotateY(180deg); }
 
-        /* UTILS */
-        input { padding: 15px; width: 100%; border-radius: 12px; border: none; background: #330000; color: white; text-align: center; margin-bottom: 10px; }
-        button.main-btn { background: var(--bright-red); color: white; border: none; padding: 15px; border-radius: 50px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
-        .love-letter { background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 15px; border-left: 4px solid var(--gold); text-align: left; font-size: 0.95rem; line-height: 1.5; }
+        /* CATCHER */
+        #catcher-canvas { background: var(--cream); border: 3px solid var(--deep-pink); border-radius: 20px; width: 100%; max-width: 300px; height: 300px; touch-action: none; display: block; margin: 0 auto; }
+
+        /* SCRATCH */
+        .scratch-box { position: relative; width: 240px; height: 240px; margin: 10px auto; border-radius: 20px; overflow: hidden; border: 4px solid var(--soft-pink); background: white; display: flex; align-items: center; justify-content: center; }
+        #scratch-canvas { position: absolute; top: 0; left: 0; touch-action: none; }
+
+        input { padding: 12px; width: 100%; border-radius: 15px; border: 2px solid var(--soft-pink); text-align: center; margin-bottom: 10px; }
+        .love-letter { background: var(--cream); padding: 15px; border-radius: 20px; border: 2px dashed var(--deep-pink); text-align: left; font-size: 0.9rem; line-height: 1.5; }
     </style>
 </head>
 <body>
     <canvas id="bg-canvas"></canvas>
-    <div class="header">Birthday Arcade</div>
+    <div class="header">Birthday Arcade 🎀</div>
+    
     <div class="card-container">
         <div id="stage1" class="page active">
-            <h2>The Entry Riddle</h2>
+            <h2>Password? ✨</h2>
             <p>"I cannot be bought, but I can be given. I am the reason your 32 years are worth livin'."</p>
             <input type="text" id="ans1" placeholder="Type here...">
-            <div id="hint-text" style="color:var(--gold); font-size:0.8rem; margin-bottom:10px;"></div>
-            <button class="main-btn" onclick="checkRiddle()">Unlock Quest</button>
+            <div id="hint-text" style="font-weight: bold; margin-bottom: 10px;"></div>
+            <button class="main-btn" onclick="checkRiddle()">Let's Play! 💕</button>
         </div>
 
         <div id="stage2" class="page">
-            <h2>This or That</h2>
-            <div id="choice-area">
-                <button class="main-btn" id="choiceA" onclick="recordChoice('A')"></button>
-                <div style="margin:10px; color:var(--gold)">or</div>
-                <button class="main-btn" id="choiceB" onclick="recordChoice('B')"></button>
-            </div>
-            <p style="margin-top:10px; font-size: 0.8rem; color: var(--gold);">Choice <span id="q-num">1</span>/10</p>
+            <h2>This or That 🍦</h2>
+            <button class="main-btn" id="choiceA" onclick="recordChoice('A')"></button>
+            <div style="margin:5px; font-weight: bold;">or</div>
+            <button class="main-btn" id="choiceB" onclick="recordChoice('B')"></button>
+            <p style="font-size: 0.8rem; margin-top: 10px;">Step <span id="q-num">1</span>/10</p>
         </div>
 
         <div id="stage3" class="page">
-            <h2>Spin for Love</h2>
+            <h2>Spin for Love 🎡</h2>
             <div class="wheel-container">
-                <div class="pointer"></div>
+                <div class="wheel-pointer"></div>
                 <div id="wheel"></div>
             </div>
-            <div id="compliment-popup"></div>
-            <button class="main-btn" id="spin-btn" onclick="spinWheel()">TAP TO SPIN</button>
-            <button class="main-btn" id="wheel-next" style="display:none;" onclick="showPage('stage3_match'); initMatch();">Next Game</button>
+            <div id="compliment-popup" style="font-weight: bold; font-style: italic; margin-bottom: 10px; min-height: 40px;"></div>
+            <button class="main-btn" id="spin-btn" onclick="spinWheel()">SPIN ME! ✨</button>
+            <button class="main-btn" id="wheel-next" style="display:none;" onclick="showPage('stage3_match'); initMatch();">Next Game 🧸</button>
         </div>
 
         <div id="stage3_match" class="page">
-            <h2>Memory Match</h2>
+            <h2>Memory Match 💌</h2>
             <div class="match-grid" id="match-grid"></div>
         </div>
 
+        <div id="stage4" class="page">
+            <h2>Catch My Love ☁️</h2>
+            <p style="font-size: 0.8rem;">Slide to catch 10 hearts!</p>
+            <canvas id="catcher-canvas" width="300" height="300"></canvas>
+            <h3 id="score-text">Hearts: 0/10</h3>
+        </div>
+
         <div id="stage5" class="page">
-            <h2>Scratch to Reveal</h2>
+            <h2>Scratch for a Kiss 💋</h2>
             <div class="scratch-box">
-                <div id="scratch-content" style="text-align:center; padding:10px;">You are the<br>best thing in<br>my life! ❤️</div>
-                <canvas id="scratch-canvas" width="250" height="250"></canvas>
+                <div id="scratch-content" style="text-align:center; font-weight: bold;">You are my<br>Favorite Human!<br>🍭✨</div>
+                <canvas id="scratch-canvas" width="240" height="240"></canvas>
             </div>
-            <p style="font-size:0.8rem; color:var(--gold)">Scratch the silver away!</p>
         </div>
 
         <div id="win" class="page">
-            <h2 style="font-family:'Dancing Script'; color:var(--gold);">Level 32 Unlocked!</h2>
+            <h2 style="font-family:'Dancing Script'; font-size: 2rem;">Yay! You Won! 🎂</h2>
             <div class="love-letter">
-                "Happy Birthday LOVE!<br><br>
-                Today you picked: <span id="final-choices" style="color:var(--gold)"></span>.<br><br>
-                Through the highs and lows, fights and laughs, you are my person. Today is your special day. The day I created this when we had a fight, and at this moment I don't know on what terms we are, but always remember that whatever the future holds for us, I will always love you. It's ok if we have drifted apart, but the moments we spent together were worth more than anything else in this world. I have not been well these days and I'm sorry for making you suffer. Have a peaceful 32nd birthday.I hope 32 brings you everything you've ever dreamed of.<br><br>
-                I love you!"
+                "Happy 32nd Birthday LOVE!<br><br>
+                Today you picked: <span id="final-choices" style="font-weight: bold;"></span>.<br><br>
+                Today is your special day. The moments we've spent together are worth more than anything else in this world. I hope you achieve all your dreams.<br><br>
+                <b>I love you!</b>"
             </div>
-            <button class="main-btn" onclick="location.reload()">Replay</button>
+            <button class="main-btn" onclick="location.reload()">Replay 🍭</button>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script>
+        let gameActive = false;
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
+            gameActive = (id === 'stage4');
+            if(gameActive) initCatcher();
         }
 
-        // 1. RIDDLE
-        let attempts = 0;
         function checkRiddle() {
             if(document.getElementById('ans1').value.toLowerCase().includes("love")) {
                 confetti(); showPage('stage2'); loadThisOrThat();
             } else {
-                attempts++;
-                document.getElementById('hint-text').innerText = attempts > 1 ? "Hint: what our bond holds" : "Socho socho...";
+                document.getElementById('hint-text').innerText = "Hint: what our bond holds";
             }
         }
 
-        // 2. THIS OR THAT
         const options = [{a:"Long Walks 🌳",b:"Late Drives 🚗"},{a:"Home Food 🍝",b:"Ordering In 🍕"},{a:"Beach 🏖️",b:"Mountains ⛰️"},{a:"Action 🍿",b:"Romcom 🎬"},{a:"Early Bird ☀️",b:"Night Owl 🦉"},{a:"Gifts 🎁",b:"Surprises ✨"},{a:"Coffee ☕",b:"Ice Cream 🍦"},{a:"Party 🥳",b:"Cozy Night 🛋️"},{a:"Travel ✈️",b:"Home 🏡"},{a:"Dancing 💃",b:"Talking 💬"}];
         let curQ = 0, selected = [];
         function loadThisOrThat() {
@@ -145,46 +192,33 @@
             curQ++; loadThisOrThat();
         }
 
-        // 3. SPIN WHEEL
-        const wheelItems = [
-            {emoji: "💪", text: "You have the kindest soul I've ever met."},
-            {emoji: "🔥", text: "You look incredibly handsome today (and every day)."},
-            {emoji: "🧠", text: "I love how smart and determined you are."},
-            {emoji: "⚽", text: "You are the MVP of my heart, always."},
-            {emoji: "💍", text: "Building a life with you is my favorite adventure."},
-            {emoji: "🏠", text: "You feel like home to me, no matter where we are."}
-        ];
+        const wheelItems = [{emoji:"🧸", text:"You're my favorite hug."}, {emoji:"🍭", text:"Life is sweeter with you."}, {emoji:"✨", text:"Your eyes sparkle."}, {emoji:"🌸", text:"You're my spring."}, {emoji:"🧁", text:"Total cutie!"}, {emoji:"🍯", text:"I'm so lucky."}];
         function initWheel() {
             const wheel = document.getElementById('wheel');
+            wheel.innerHTML = '';
             wheelItems.forEach((item, i) => {
                 const el = document.createElement('div');
                 el.className = 'wheel-emoji';
                 el.innerText = item.emoji;
                 const angle = i * 60;
-                el.style.transform = `rotate(${angle}deg) translateY(-100px) rotate(-${angle}deg)`;
+                el.style.transform = `rotate(${angle}deg) translateY(-85px) rotate(-${angle}deg)`;
                 wheel.appendChild(el);
             });
         }
         function spinWheel() {
             const wheel = document.getElementById('wheel');
-            const btn = document.getElementById('spin-btn');
-            const rand = Math.floor(Math.random() * 360) + 1440; // 4 full rotations min
+            const rand = Math.floor(Math.random() * 360) + 1440; 
             wheel.style.transform = `rotate(${rand}deg)`;
-            btn.disabled = true;
-
+            document.getElementById('spin-btn').style.display = "none";
             setTimeout(() => {
-                const actualAngle = (360 - (rand % 360)) % 360;
-                const index = Math.floor(actualAngle / 60);
-                const popup = document.getElementById('compliment-popup');
-                popup.innerText = wheelItems[index].text;
-                popup.style.display = "block";
+                const index = Math.floor(((360 - (rand % 360)) % 360) / 60);
+                document.getElementById('compliment-popup').innerText = wheelItems[index].text;
                 document.getElementById('wheel-next').style.display = "block";
                 confetti();
             }, 4000);
         }
 
-        // 4. MEMORY MATCH
-        const matchIcons = ['💍','🫂','🥂','💌','📸','🏠','🎞️','❤️'];
+        const matchIcons = ['🧸','🍦','🌸','💌','🍭','🧁','✨','❤️'];
         let cards = [...matchIcons, ...matchIcons].sort(()=>Math.random()-0.5), flipped = [], matched = 0;
         function initMatch() {
             const grid = document.getElementById('match-grid'); grid.innerHTML = '';
@@ -197,7 +231,7 @@
                         if(flipped.length == 2) {
                             if(flipped[0].icon == flipped[1].icon) {
                                 matched++; flipped = [];
-                                if(matched == 8) { confetti(); setTimeout(()=>showPage('stage5'), 800); initScratch(); }
+                                if(matched == 8) { confetti(); setTimeout(()=> { showPage('stage4'); }, 800); }
                             } else { setTimeout(()=> {flipped.forEach(f=>f.el.classList.remove('flipped')); flipped=[];}, 700); }
                         }
                     }
@@ -206,26 +240,51 @@
             });
         }
 
-        // 5. SCRATCH OFF
+        function initCatcher() {
+            const cvs = document.getElementById('catcher-canvas'), ctx = cvs.getContext('2d');
+            let score = 0, basketX = 125, items = [];
+            const handleInput = (e) => {
+                const rect = cvs.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                basketX = Math.max(0, Math.min(clientX - rect.left - 25, 250));
+            };
+            cvs.addEventListener('touchmove', handleInput, {passive: false});
+            cvs.addEventListener('mousemove', handleInput);
+            function spawn() { if(score < 10 && gameActive) { items.push({x: Math.random()*260 + 20, y: 0}); setTimeout(spawn, 900); } }
+            spawn();
+            function draw() {
+                if(!gameActive) return;
+                ctx.clearRect(0,0,300,300); ctx.font = "40px Arial"; ctx.fillText("🧺", basketX, 280);
+                items.forEach((h, i) => {
+                    h.y += 4; ctx.fillText("❤️", h.x, h.y);
+                    if(h.y > 240 && h.x > basketX - 10 && h.x < basketX + 45) {
+                        items.splice(i, 1); score++;
+                        document.getElementById('score-text').innerText = `Hearts: ${score}/10`;
+                        if(score >= 10) { gameActive = false; confetti(); setTimeout(()=> { showPage('stage5'); initScratch(); }, 600); }
+                    }
+                    if(h.y > 310) items.splice(i, 1);
+                });
+                if(score < 10) requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
         function initScratch() {
             const canvas = document.getElementById('scratch-canvas'), ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#C0C0C0'; ctx.fillRect(0,0,250,250);
-            ctx.fillStyle = '#444'; ctx.font = "20px Poppins"; ctx.textAlign="center"; ctx.fillText("Scratch Me ❤️", 125, 125);
-            
+            ctx.fillStyle = '#ffdae0'; ctx.fillRect(0,0,240,240);
+            ctx.fillStyle = '#ff8fa3'; ctx.font = "bold 20px Quicksand"; ctx.textAlign="center"; ctx.fillText("Scratch Me! ✨", 120, 120);
             let painting = false;
-            function scratch(e) {
+            const scratch = (e) => {
                 if(!painting) return;
                 const rect = canvas.getBoundingClientRect();
-                const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-                const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
                 ctx.globalCompositeOperation = 'destination-out';
-                ctx.beginPath(); ctx.arc(x,y,25,0,Math.PI*2); ctx.fill();
-                
-                const data = ctx.getImageData(0,0,250,250).data;
-                let cleared = 0;
-                for(let i=3; i<data.length; i+=4) if(data[i]==0) cleared++;
-                if(cleared > (250*250)*0.6) { painting = false; confetti(); setTimeout(()=>showPage('win'), 1000); }
-            }
+                ctx.beginPath(); ctx.arc(clientX - rect.left, clientY - rect.top, 25, 0, Math.PI*2); ctx.fill();
+                const d = ctx.getImageData(0,0,240,240).data;
+                let c = 0; for(let i=3; i<d.length; i+=4) if(d[i]==0) c++;
+                if(c > 35000) { painting = false; confetti(); setTimeout(()=>showPage('win'), 800); }
+            };
             canvas.addEventListener('mousedown', ()=>painting=true);
             canvas.addEventListener('mousemove', scratch);
             canvas.addEventListener('touchstart', (e)=>{painting=true; scratch(e);});
@@ -234,11 +293,10 @@
             window.addEventListener('touchend', ()=>painting=false);
         }
 
-        // BG ANIM
         const bg = document.getElementById('bg-canvas'); const bctx = bg.getContext('2d');
         bg.width = window.innerWidth; bg.height = window.innerHeight;
-        let bgh = []; for(let i=0; i<20; i++) bgh.push({x:Math.random()*bg.width, y:Math.random()*bg.height, s:Math.random()*12+5, sp:Math.random()*0.8+0.4});
-        function anim() { bctx.clearRect(0,0,bg.width,bg.height); bgh.forEach(h => { h.y -= h.sp; if(h.y < -20) h.y = bg.height+20; bctx.globalAlpha = 0.2; bctx.font = h.s+"px Arial"; bctx.fillText("❤️", h.x, h.y); }); requestAnimationFrame(anim); } anim();
+        let bgh = []; for(let i=0; i<20; i++) bgh.push({x:Math.random()*bg.width, y:Math.random()*bg.height, s:Math.random()*15+5, sp:Math.random()*0.4+0.2, char: Math.random() > 0.5 ? '🌸' : '❤️'});
+        function anim() { bctx.clearRect(0,0,bg.width,bg.height); bgh.forEach(h => { h.y -= h.sp; if(h.y < -20) h.y = bg.height+20; bctx.globalAlpha = 0.4; bctx.font = h.s+"px Arial"; bctx.fillText(h.char, h.x, h.y); }); requestAnimationFrame(anim); } anim();
     </script>
 </body>
 </html>
