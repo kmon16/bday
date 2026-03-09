@@ -158,14 +158,38 @@
             if(gameActive) initCatcher();
         }
 
+        let attempts = 0;
         function checkRiddle() {
-            // Music starts as soon as he interacts with the button
-            music.play().catch(e => console.log("Music play blocked until interaction"));
-            
-            if(document.getElementById('ans1').value.toLowerCase().includes("love")) {
-                confetti(); showPage('stage2'); loadThisOrThat();
+            // Music starts on the first interaction
+            const music = document.getElementById('bg-music');
+            music.play().catch(e => console.log("Audio waiting for interaction"));
+
+            const val = document.getElementById('ans1').value.toLowerCase().trim();
+            const hint = document.getElementById('hint-text');
+            const inputField = document.getElementById('ans1');
+
+            if(val.includes("love")) {
+                confetti(); 
+                showPage('stage2'); 
+                loadThisOrThat();
             } else {
-                document.getElementById('hint-text').innerText = "Hint: what our bond holds";
+                attempts++;
+                
+                // Visual indication of wrong answer
+                inputField.style.border = "2px solid #c9184a"; // Turns berry red
+                inputField.classList.add('shake'); // Triggers a shake animation
+                
+                // Remove the shake class after animation so it can trigger again
+                setTimeout(() => inputField.classList.remove('shake'), 500);
+
+                if(attempts === 1) {
+                    hint.innerText = "Hint: Socho socho... ✨";
+                } else if(attempts === 2) {
+                    hint.innerText = "Hint: what our bond holds";
+                } else if(attempts >= 3) {
+                    // Specific indication for 3rd wrong attempt
+                    hint.innerHTML = "<span style='color:red;'>Wrong Answer!</span><br>Final Hint: Starts with 'L' and rhymes with Dove! ❤️";
+                }
             }
         }
 
