@@ -42,36 +42,10 @@
             margin-top: 10px; box-shadow: 0 4px 0 var(--berry);
         }
 
-        /* --- WHEEL & POINTER FIX --- */
-        .wheel-container { 
-            position: relative; 
-            width: 260px; 
-            height: 260px; 
-            margin: 25px auto; 
-            z-index: 1;
-        }
-        
-        #wheel { 
-            width: 100%; height: 100%; border-radius: 50%; border: 6px solid var(--deep-pink); 
-            transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); 
-            background: conic-gradient(from 0deg, #ffb3c1 0deg 60deg, #ff8fa3 60deg 120deg, #ffb3c1 120deg 180deg, #ff8fa3 180deg 240deg, #ffb3c1 240deg 300deg, #ff8fa3 300deg 360deg); 
-        }
-
-        /* The actual pointer triangle */
-        .wheel-pointer {
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 35px solid var(--berry); /* Dark berry color for visibility */
-            z-index: 100; /* Ensures it stays on top of everything */
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
-        }
-
+        /* WHEEL */
+        .wheel-container { position: relative; width: 260px; height: 260px; margin: 25px auto; z-index: 1; }
+        #wheel { width: 100%; height: 100%; border-radius: 50%; border: 6px solid var(--deep-pink); transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); background: conic-gradient(from 0deg, #ffb3c1 0deg 60deg, #ff8fa3 60deg 120deg, #ffb3c1 120deg 180deg, #ff8fa3 180deg 240deg, #ffb3c1 240deg 300deg, #ff8fa3 300deg 360deg); }
+        .wheel-pointer { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 35px solid var(--berry); z-index: 100; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); }
         .wheel-emoji { position: absolute; width: 40px; height: 40px; top: 50%; left: 50%; margin-top: -20px; margin-left: -20px; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; transform-origin: center center; }
 
         /* MATCH GRID */
@@ -91,10 +65,20 @@
 
         input { padding: 12px; width: 100%; border-radius: 15px; border: 2px solid var(--soft-pink); text-align: center; margin-bottom: 10px; }
         .love-letter { background: var(--cream); padding: 15px; border-radius: 20px; border: 2px dashed var(--deep-pink); text-align: left; font-size: 0.9rem; line-height: 1.5; }
+        
+        /* MUSIC MUTE BUTTON */
+        #music-btn { position: fixed; bottom: 15px; right: 15px; z-index: 2000; background: var(--white); border: 2px solid var(--deep-pink); border-radius: 50%; width: 45px; height: 45px; font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
     <canvas id="bg-canvas"></canvas>
+    
+    <audio id="bg-music" loop>
+        <source src="mitski.mp3" type="audio/mpeg">
+    </audio>
+    
+    <button id="music-btn" onclick="toggleMusic()">🎵</button>
+
     <div class="header">Birthday Arcade 🎀</div>
     
     <div class="card-container">
@@ -160,6 +144,13 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script>
         let gameActive = false;
+        const music = document.getElementById('bg-music');
+
+        function toggleMusic() {
+            if (music.paused) music.play();
+            else music.pause();
+        }
+
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
@@ -168,6 +159,9 @@
         }
 
         function checkRiddle() {
+            // Music starts as soon as he interacts with the button
+            music.play().catch(e => console.log("Music play blocked until interaction"));
+            
             if(document.getElementById('ans1').value.toLowerCase().includes("love")) {
                 confetti(); showPage('stage2'); loadThisOrThat();
             } else {
