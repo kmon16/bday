@@ -79,9 +79,24 @@
         
         /* MUSIC MUTE BUTTON */
         #music-btn { position: fixed; bottom: 15px; right: 15px; z-index: 2000; background: var(--white); border: 2px solid var(--deep-pink); border-radius: 50%; width: 45px; height: 45px; font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    /* SIGNATURE IN BOTTOM LEFT */
+.signature {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    font-family: 'Dancing Script', cursive;
+    font-size: 0.9rem;
+    color: var(--berry);
+    opacity: 0.8;
+    z-index: 2000;
+    pointer-events: none;
+    text-align: left;
+    line-height: 1.2;
+}
     </style>
 </head>
 <body>
+    <div class="signature">With Love,<br>Made for you,<br>by MONA</div>
     <canvas id="bg-canvas"></canvas>
     
     <audio id="bg-music" loop>
